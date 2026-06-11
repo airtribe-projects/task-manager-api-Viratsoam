@@ -23,6 +23,39 @@ tap.test("POST /tasks with invalid data", async (t) => {
   t.end();
 });
 
+tap.test("POST /tasks with empty title", async (t) => {
+  const newTask = {
+    title: "",
+    description: "Valid Description",
+    completed: false,
+  };
+  const response = await server.post("/tasks").send(newTask);
+  t.equal(response.status, 400);
+  t.end();
+});
+
+tap.test("POST /tasks with empty description", async (t) => {
+  const newTask = {
+    title: "Valid Title",
+    description: "",
+    completed: false,
+  };
+  const response = await server.post("/tasks").send(newTask);
+  t.equal(response.status, 400);
+  t.end();
+});
+
+tap.test("POST /tasks with invalid completed type", async (t) => {
+  const newTask = {
+    title: "Valid Title",
+    description: "Valid Description",
+    completed: "false",
+  };
+  const response = await server.post("/tasks").send(newTask);
+  t.equal(response.status, 400);
+  t.end();
+});
+
 tap.test("GET /tasks", async (t) => {
   const response = await server.get("/tasks");
   t.equal(response.status, 200);
@@ -56,6 +89,12 @@ tap.test("GET /tasks/:id with invalid id", async (t) => {
   t.end();
 });
 
+tap.test("GET /tasks/:id with non-numeric id", async (t) => {
+  const response = await server.get("/tasks/abc");
+  t.equal(response.status, 400);
+  t.end();
+});
+
 tap.test("PUT /tasks/:id", async (t) => {
   const updatedTask = {
     title: "Updated Task",
@@ -83,6 +122,17 @@ tap.test("PUT /tasks/:id with invalid data", async (t) => {
     title: "Updated Task",
     description: "Updated Task Description",
     completed: "true",
+  };
+  const response = await server.put("/tasks/1").send(updatedTask);
+  t.equal(response.status, 400);
+  t.end();
+});
+
+tap.test("PUT /tasks/:id with empty title", async (t) => {
+  const updatedTask = {
+    title: "",
+    description: "Valid Description",
+    completed: false,
   };
   const response = await server.put("/tasks/1").send(updatedTask);
   t.equal(response.status, 400);
